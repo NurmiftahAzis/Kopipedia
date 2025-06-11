@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+  <!-- fontawesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  
+  <!-- sweetalert2 css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.2/sweetalert2.min.css">
+  
+  <!-- my css -->
+  <link rel="stylesheet" href="css/style.css">
+  <title>Register - KopiPedia</title>
+</head>
+<body>
+
+  <!-- navbar start -->
+  <nav class="navbar active">
+    <a href="index.html" class="navbar-logo">Kopi<span>Pedia</span></a>
+    <div class="navbar-list-group">
+      <a href="index.html" class="navbar-list">Home</a>
+      <a href="index.html#about" class="navbar-list">Tentang Kami</a>
+      <a href="index.html#product" class="navbar-list">Produk</a>
+      <a href="index.html#contact" class="navbar-list">Kontak</a>
+    </div>
+    <div class="navbar-icon">
+      <a href="login.html" class="button" style="margin-right: 1rem;">Masuk</a>
+      <i data-feather="menu" class="icon" id="hamburger"></i>
+    </div>
+  </nav>
+  <!-- navbar end -->
+  
+  <!-- register section start -->
+  <section class="auth-section" id="register">
+    <div class="auth-container">
+      <div class="header">
+        <h2>Daftar <span>Akun</span></h2>
+        <p>Buat akun untuk menikmati pengalaman belanja kopi terbaik</p>
+      </div>
+      <div class="form-wrapper">
+        <form id="register-form" class="form">
+          <div class="form-group">
+            <label for="fullname" class="label">Nama Lengkap</label>
+            <input type="text" id="fullname" class="input" placeholder="Nama lengkap" required>
+          </div>
+          <div class="form-group">
+            <label for="email" class="label">Email</label>
+            <input type="email" id="email" class="input" placeholder="Alamat email" required>
+          </div>
+          <div class="form-group">
+            <label for="phone" class="label">Nomor Telepon</label>
+            <input type="tel" id="phone" class="input" placeholder="Nomor telepon" required>
+          </div>
+          <div class="form-group">
+            <label for="password" class="label">Password</label>
+            <input type="password" id="password" class="input" placeholder="Password" required>
+          </div>
+          <div class="form-group">
+            <label for="confirm-password" class="label">Konfirmasi Password</label>
+            <input type="password" id="confirm-password" class="input" placeholder="Konfirmasi password" required>
+          </div>
+          <button type="submit" class="button btn-submit">Daftar</button>
+        </form>
+        <p class="auth-redirect">Sudah punya akun? <a href="login.html">Masuk sekarang</a></p>
+      </div>
+    </div>
+  </section>
+  <!-- register section end -->
+  
+  <!-- footer start -->
+  <footer class="footer">
+    <div class="wrapper">
+      <a href="https://www.instagram.com/nrmfthazs.__/?__pwa=1" target="_blank"><i data-feather="instagram"></i></a>
+      <a href="https://www.facebook.com/miftaah.25" target="_blank"><i data-feather="facebook"></i></a>
+      <a href="https://x.com/itaa_toys250" target="_blank"><i data-feather="twitter"></i></a>
+    </div>
+    <div class="wrapper">
+      <a href="index.html">Home</a>
+      <a href="index.html#about">Tentang Kami</a>
+      <a href="index.html#product">Produk Kami</a>
+      <a href="index.html#contact">Kontak</a>
+    </div>
+    <span>created by Minira Group | © 2025</span>
+  </footer>
+  <!-- footer end -->
+
+  <!-- feather icon -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="js/icon.js"></script>
+  
+  <!-- sweetalert2 js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.2/sweetalert2.min.js"></script>
+  
+  <!-- my javascript -->
+  <script src="js/auth.js"></script>
+
+  <form action="php/register.php" method="POST" id="register-form">
+    <input type="text" name="fullname" required>
+    <input type="email" name="email" required>
+    <input type="tel" name="phone" required>
+    <input type="password" name="password" required>
+    <button type="submit">Daftar</button>
+  </form>
+
+</body>
+</html>
