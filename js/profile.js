@@ -1,4 +1,3 @@
-/profile.js
 
 document.addEventListener('DOMContentLoaded', () => {
   const profileName = document.getElementById('profile-name');
