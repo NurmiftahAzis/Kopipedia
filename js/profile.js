@@ -1,4 +1,4 @@
-// js/profile.js
+/profile.js
 
 document.addEventListener('DOMContentLoaded', () => {
   const profileName = document.getElementById('profile-name');
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Function to fetch and display user profile
   function fetchUserProfile() {
-    fetch('php/get_user_info.php') // Create this PHP file
+    fetch('php/get_user_info.php')
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
           profilePhone.textContent = user.phone;
           profileDate.textContent = new Date(user.created_at).toLocaleDateString('id-ID'); // Format date
 
-          // Store user info in localStorage for auth.js
+          // Store user info in localStorage for auth.js to use for displaying name in navbar
           localStorage.setItem('currentUser', JSON.stringify(user));
         } else {
           // Redirect to login if not logged in or session expired
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Function to fetch and display user addresses
   function fetchUserAddresses() {
-    fetch('php/get_addresses.php') // Create this PHP file
+    fetch('php/get_addresses.php')
       .then(response => response.json())
       .then(data => {
         addressList.innerHTML = ''; // Clear previous addresses
@@ -60,39 +60,40 @@ document.addEventListener('DOMContentLoaded', () => {
             addressCard.className = 'address-card';
             addressCard.innerHTML = `
               <div class="address-header">
-                <h4>${address.label}</h4>
-                <div class="address-actions">
-                  <button type="button" class="edit-address-btn" data-id="${address.id}">
-                    <i data-feather="edit"></i>
-                  </button>
-                  <button type="button" class="delete-address-btn" data-id="${address.id}">
-                    <i data-feather="trash-2"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="address-details">
-                <p>${address.recipient_name} (${address.recipient_phone})</p>
-                <p>${address.full_address}, ${address.postal_code}</p>
-              </div>
-            `;
-            addressList.appendChild(addressCard);
-          });
-          feather.replace(); // Re-render feather icons after adding new elements
-        } else {
-          addressList.innerHTML = '<p class="empty-message">Belum ada alamat tersimpan</p>';
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching addresses:', error);
-        addressList.innerHTML = '<p class="empty-message">Gagal memuat alamat.</p>';
-      });
-  }
+                <h4><span class="math-inline">\{address\.label\}</h4\>
+<div class="address-actions">
+<button type="button" class="edit-address-btn" data-id="{address.id}">
+<i data-feather="edit"></i>
+</button>
+<button type="button" class="delete-address-btn" data-id="address.id"><idata−feather="trash−2"></i></button></div></div><divclass="address−details"><p>{address.recipient_name} (address.recipient 
+p
+​
+ hone)</p><p>{address.full_address}, ${address.postal_code}</p>
+</div>
+`;
+addressList.appendChild(addressCard);
+});
+feather.replace(); // Re-render feather icons after adding new elements
+} else {
+addressList.innerHTML = '<p class="empty-message">Belum ada alamat tersimpan</p>';
+}
+})
+.catch(error => {
+console.error('Error fetching addresses:', error);
+Swal.fire({
+icon: 'error',
+title: 'Error',
+text: 'Gagal memuat alamat.'
+});
+addressList.innerHTML = '<p class="empty-message">Gagal memuat alamat.</p>';
+});
+}
 
   // Event listener for "Tambah Alamat Baru" button
   addAddressBtn.addEventListener('click', () => {
     // Reset form for new address
     addressForm.reset();
-    addressIdInput.value = ''; // Clear address ID for new entry
+    addressIdInput.value = ''; // Clear address ID for new entry (indicates add mode)
     addressModal.querySelector('h3').textContent = 'Tambah Alamat Baru';
     addressModal.classList.add('active');
   });
@@ -101,22 +102,27 @@ document.addEventListener('DOMContentLoaded', () => {
   addressForm.addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const id = addressIdInput.value;
+    const id = addressIdInput.value; // Will be empty for new, has value for edit
     const label = document.getElementById('address-label').value;
     const recipientName = document.getElementById('recipient-name').value;
     const recipientPhone = document.getElementById('recipient-phone').value;
     const fullAddress = document.getElementById('address-detail').value;
     const postalCode = document.getElementById('postal-code').value;
 
-    const url = id ? 'php/update_address.php' : 'php/add_address.php'; // Create these PHP files
-    const method = 'POST'; // Always POST for simplicity, PHP can handle update based on ID
+    // Use a single PHP file for both add and update based on 'id' parameter
+    const url = 'php/add_address.php'; // This file is now updated to handle both
+    
+    let formData = `label=<span class="math-inline">\{label\}&recipient\_name\=</span>{recipientName}&recipient_phone=<span class="math-inline">\{recipientPhone\}&full\_address\=</span>{fullAddress}&postal_code=${postalCode}`;
+    if (id) {
+        formData += `&id=${id}`; // Include ID if updating
+    }
 
     fetch(url, {
-      method: method,
+      method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: `id=${id}&label=${label}&recipient_name=${recipientName}&recipient_phone=${recipientPhone}&full_address=${fullAddress}&postal_code=${postalCode}`
+      body: formData
     })
     .then(response => response.text())
     .then(data => {
@@ -129,10 +135,19 @@ document.addEventListener('DOMContentLoaded', () => {
         addressModal.classList.remove('active');
         fetchUserAddresses(); // Refresh addresses
       } else {
+        console.error('Address save error response:', data);
+        let errorMessage = 'Terjadi kesalahan saat menyimpan alamat.';
+        if (data === 'error_not_logged_in') {
+            errorMessage = 'Anda belum login. Silakan login terlebih dahulu.';
+        } else if (data === 'error_db_connection') {
+            errorMessage = 'Terjadi masalah koneksi database. Silakan coba lagi nanti.';
+        } else if (data === 'error_save_failed') {
+            errorMessage = 'Gagal menyimpan alamat karena kesalahan server.';
+        }
         Swal.fire({
           icon: 'error',
           title: 'Gagal',
-          text: 'Terjadi kesalahan saat menyimpan alamat.'
+          text: errorMessage
         });
       }
     })
@@ -151,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.closest('.edit-address-btn')) {
       const addressId = e.target.closest('.edit-address-btn').dataset.id;
       // Fetch address details to populate the form
-      fetch(`php/get_address_detail.php?id=${addressId}`) // Create this PHP file
+      fetch(`php/get_address_detail.php?id=${addressId}`)
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success' && data.address) {
@@ -166,10 +181,11 @@ document.addEventListener('DOMContentLoaded', () => {
             addressModal.querySelector('h3').textContent = 'Edit Alamat';
             addressModal.classList.add('active');
           } else {
+            console.error('Address detail error response:', data);
             Swal.fire({
               icon: 'error',
               title: 'Gagal',
-              text: 'Alamat tidak ditemukan.'
+              text: 'Alamat tidak ditemukan atau Anda tidak memiliki izin.'
             });
           }
         })
@@ -192,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelButtonText: 'Batal'
       }).then((result) => {
         if (result.isConfirmed) {
-          fetch('php/delete_address.php', { // Create this PHP file
+          fetch('php/delete_address.php', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
@@ -209,10 +225,17 @@ document.addEventListener('DOMContentLoaded', () => {
               });
               fetchUserAddresses(); // Refresh addresses
             } else {
+              console.error('Delete address error response:', data);
+              let errorMessage = 'Terjadi kesalahan saat menghapus alamat.';
+              if (data === 'error_not_logged_in') {
+                errorMessage = 'Anda belum login.';
+              } else if (data === 'error_db_connection') {
+                errorMessage = 'Terjadi masalah koneksi database.';
+              }
               Swal.fire({
                 icon: 'error',
                 title: 'Gagal',
-                text: 'Terjadi kesalahan saat menghapus alamat.'
+                text: errorMessage
               });
             }
           })
@@ -240,4 +263,4 @@ document.addEventListener('DOMContentLoaded', () => {
       addressModal.classList.remove('active');
     });
   }
-});a
+});

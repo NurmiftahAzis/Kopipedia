@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `fullname=${fullname}&email=${email}&phone=${phone}&password=${password}`
+        body: `fullname=<span class="math-inline">\{fullname\}&email\=</span>{email}&phone=<span class="math-inline">\{phone\}&password\=</span>{password}`
       })
       .then(response => response.text())
       .then(data => {
@@ -39,11 +39,17 @@ document.addEventListener('DOMContentLoaded', () => {
           }).then(() => {
             window.location.href = 'login.html';
           });
+        } else if (data === 'error_duplicate_email') {
+          Swal.fire({
+            icon: 'error',
+            title: 'Registrasi Gagal',
+            text: 'Email sudah terdaftar. Silakan gunakan email lain atau masuk.'
+          });
         } else {
           Swal.fire({
             icon: 'error',
             title: 'Registrasi Gagal',
-            text: 'Terjadi kesalahan saat mendaftar. Email mungkin sudah terdaftar.'
+            text: 'Terjadi kesalahan saat mendaftar. Silakan coba lagi.'
           });
         }
       })
@@ -72,25 +78,43 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `email=${email}&password=${password}`
+        body: `email=<span class="math-inline">\{email\}&password\=</span>{password}`
       })
       .then(response => response.text())
       .then(data => {
         if (data === 'success') {
-          // Store user session information in localStorage (for client-side access)
-          // This is a simplified approach. For production, consider JWT or more robust session management.
-          // Fetch user details after successful login if needed
-          fetch('php/get_user_info.php') // You'll need to create this endpoint
+          // Fetch user details after successful login and store in localStorage
+          fetch('php/get_user_info.php')
             .then(res => res.json())
             .then(userInfo => {
-              localStorage.setItem('currentUser', JSON.stringify(userInfo));
-              Swal.fire({
-                icon: 'success',
-                title: 'Login Berhasil',
-                text: 'Selamat datang di KopiPedia!'
-              }).then(() => {
-                window.location.href = 'index.html';
-              });
+              if (userInfo.status === 'success') {
+                localStorage.setItem('currentUser', JSON.stringify(userInfo.user)); // Store only the user object
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Login Berhasil',
+                  text: 'Selamat datang di KopiPedia!'
+                }).then(() => {
+                  window.location.href = 'index.html';
+                });
+              } else {
+                  Swal.fire({ // If get_user_info fails but login succeeded
+                      icon: 'warning',
+                      title: 'Login Berhasil (Info Profil Bermasalah)',
+                      text: 'Terjadi masalah saat mengambil info profil. Anda mungkin perlu memuat ulang halaman.'
+                  }).then(() => {
+                      window.location.href = 'index.html';
+                  });
+              }
+            })
+            .catch(error => {
+                console.error('Error fetching user info after login:', error);
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Login Berhasil (Masalah Koneksi)',
+                    text: 'Terjadi masalah jaringan saat mengambil info profil.'
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
             });
         } else {
           Swal.fire({
@@ -141,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cancelButtonText: 'Batal'
           }).then((result) => {
             if (result.isConfirmed) {
-              fetch('php/logout.php') // You'll need to create this endpoint
+              fetch('php/logout.php')
                 .then(response => response.text())
                 .then(() => {
                   localStorage.removeItem('currentUser'); // Clear local storage
@@ -182,6 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
   updateAuthButtons(); // Call on page load
 
   // Hamburger menu (assuming it's handled in script.js, but also needs to work here)
+  // This part might be duplicated if script.js also has it.
+  // Consider centralizing hamburger logic if possible, or ensure it's idempotent.
   const navbarListGroup = document.querySelector('.navbar-list-group');
   const hamburgerButton = document.getElementById('hamburger');
   if (hamburgerButton) {

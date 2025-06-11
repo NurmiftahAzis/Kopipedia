@@ -31,7 +31,7 @@ session_start();
     <a href="#contact" class="navbar-list">Kontak</a>
   </div>
 
-  <div class="navbar-icon">
+  <div class="navbar-icon" id="navbar-auth">
     <?php if (isset($_SESSION['login']) && $_SESSION['login'] === true): ?>
 
       <a href="php/profile.php" class="button" style="margin-left: 1rem;"><?php echo $_SESSION['fullname']></a>

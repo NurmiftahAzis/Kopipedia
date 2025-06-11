@@ -1,4 +1,4 @@
-// js/checkout.js
+/ js/checkout.js
 
 document.addEventListener('DOMContentLoaded', () => {
   const checkoutItemsContainer = document.getElementById('checkout-items');
@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Function to load cart items from localStorage and display them
   function loadCartItems() {
+    // Ensure the cart items stored in localStorage also include product_id and quantity
     const cartItems = JSON.parse(localStorage.getItem('shopping-cart')) || [];
     checkoutItemsContainer.innerHTML = ''; // Clear existing items
 
@@ -27,16 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
       itemElement.className = 'checkout-item';
       itemElement.innerHTML = `
         <div class="item-info">
-          <img src="${item.image}" alt="${item.name}" class="item-image">
+          <img src="<span class="math-inline">\{item\.image\}" alt\="</span>{item.name}" class="item-image">
           <div class="item-details">
-            <h4>${item.name}</h4>
-            <span class="item-price">Rp${item.price.toLocaleString('id-ID')}</span>
-          </div>
-        </div>
-        <div class="item-quantity">x1</div> `;
-      checkoutItemsContainer.appendChild(itemElement);
-      total += item.price;
-    });
+            <h4><span class="math-inline">\{item\.name\}</h4\>
+<span class="item-price">Rp{item.price.toLocaleString('id-ID')}</span>
+</div>
+</div>
+<div class="item-quantity">x${item.quantity || 1}</div> `; // Display quantity
+checkoutItemsContainer.appendChild(itemElement);
+total += item.price * (item.quantity || 1); // Calculate total with quantity
+});
 
     checkoutTotalSpan.textContent = `Rp${total.toLocaleString('id-ID')}`;
     placeOrderBtn.disabled = false;
@@ -53,23 +54,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const addressOption = document.createElement('div');
             addressOption.className = 'address-option';
             addressOption.innerHTML = `
-              <input type="radio" id="address-${address.id}" name="shipping-address" value="${address.id}">
-              <label for="address-${address.id}">
-                <div class="address-option-content">
-                  <h4>${address.label}</h4>
-                  <p>${address.recipient_name} (${address.recipient_phone})</p>
-                  <p>${address.full_address}, ${address.postal_code}</p>
-                </div>
-              </label>
-            `;
-            shippingAddressSelector.appendChild(addressOption);
-          });
-          // Select the first address by default
-          const firstAddressRadio = shippingAddressSelector.querySelector('input[type="radio"]');
-          if (firstAddressRadio) {
-            firstAddressRadio.checked = true;
-            selectedAddressId = firstAddressRadio.value;
-          }
+              <input type="radio" id="address-<span class="math-inline">\{address\.id\}" name\="shipping\-address" value\="</span>{address.id}">
+              <label for="address-<span class="math-inline">\{address\.id\}"\>
+<div class="address-option-content">
+<h4>{address.label}</h4>
+<p>address.recipient 
+n
+​
+ ame({address.recipient_phone})</p>
+<p>${address.full_address}, ${address.postal_code}</p>
+</div>
+</label>
+`;
+shippingAddressSelector.appendChild(addressOption);
+});
+// Select the first address by default
+const firstAddressRadio = shippingAddressSelector.querySelector('input[type="radio"]');
+if (firstAddressRadio) {
+firstAddressRadio.checked = true;
+selectedAddressId = firstAddressRadio.value;
+}
 
           // Add event listener for address selection
           shippingAddressSelector.addEventListener('change', (e) => {
@@ -89,6 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .catch(error => {
         console.error('Error fetching shipping addresses:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Gagal memuat alamat pengiriman.'
+        });
         shippingAddressSelector.innerHTML = '<p class="empty-message">Gagal memuat alamat pengiriman.</p>';
       });
   }
@@ -107,9 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const method = document.querySelector('input[name="payment-method"]:checked').value;
-    const total = parseFloat(checkoutTotalSpan.textContent.replace('Rp', '').replace(/\./g, '').replace(/,/g, '')); // Clean up IDR format
+    // The total will be recalculated on the server for security, but send the frontend's total for initial check
+    const total = parseFloat(checkoutTotalSpan.textContent.replace('Rp', '').replace(/\./g, '').replace(/,/g, ''));
 
-    // Get cart items to send to backend for order_items table
     const cartItems = JSON.parse(localStorage.getItem('shopping-cart')) || [];
     if (cartItems.length === 0) {
       Swal.fire({
@@ -120,10 +129,18 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Prepare cart items to send, ensuring product_id and quantity are included
+    const itemsToSend = cartItems.map(item => ({
+      id: item.id, // Assuming product ID is now stored in cart item
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity || 1
+    }));
+
     fetch("php/checkout.php", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `total=${total}&payment_method=${method}&address_id=${selectedAddressId}&cart_items=${JSON.stringify(cartItems)}`
+      body: `total=<span class="math-inline">\{total\}&payment\_method\=</span>{method}&address_id=<span class="math-inline">\{selectedAddressId\}&cart\_items\=</span>{JSON.stringify(itemsToSend)}`
     })
     .then(res => res.text())
     .then(data => {
@@ -137,10 +154,21 @@ document.addEventListener('DOMContentLoaded', () => {
           window.location.href = "index.html";
         });
       } else {
+        console.error('Checkout error response:', data);
+        let errorMessage = 'Terjadi kesalahan saat membuat pesanan.';
+        if (data === 'error_not_logged_in') {
+            errorMessage = 'Anda belum login. Silakan login untuk melanjutkan.';
+        } else if (data === 'error_db_connection') {
+            errorMessage = 'Terjadi masalah koneksi database. Silakan coba lagi nanti.';
+        } else if (data === 'error_empty_cart') {
+            errorMessage = 'Keranjang Anda kosong.';
+        } else if (data === 'error_checkout_failed') {
+            errorMessage = 'Proses checkout gagal karena kesalahan internal.';
+        }
         Swal.fire({
           icon: 'error',
           title: 'Gagal Checkout',
-          text: 'Terjadi kesalahan saat membuat pesanan.'
+          text: errorMessage
         });
       }
     })
