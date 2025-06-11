@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+  <!-- fontawesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  
+  <!-- sweetalert2 css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.2/sweetalert2.min.css">
+  
+  <!-- my css -->
+  <link rel="stylesheet" href="css/style.css">
+  <title>Checkout - KopiPedia</title>
+</head>
+<body>
+
+  <!-- navbar start -->
+  <nav class="navbar active">
+    <a href="index.html" class="navbar-logo">Kopi<span>Pedia</span></a>
+    <div class="navbar-list-group">
+      <a href="index.html" class="navbar-list">Home</a>
+      <a href="index.html#about" class="navbar-list">Tentang Kami</a>
+      <a href="index.html#product" class="navbar-list">Produk</a>
+      <a href="index.html#contact" class="navbar-list">Kontak</a>
+    </div>
+    <div class="navbar-icon" id="navbar-auth">
+      <!-- Auth buttons will be inserted here by JavaScript -->
+      <i data-feather="menu" class="icon" id="hamburger"></i>
+    </div>
+  </nav>
+  <!-- navbar end -->
+  
+  <!-- checkout section start -->
+  <section class="checkout-section" id="checkout">
+    <div class="checkout-container">
+      <div class="header">
+        <h2>Checkout <span>Pesanan</span></h2>
+        <p>Selesaikan pembelian Anda dengan beberapa langkah mudah</p>
+      </div>
+      
+      <div class="checkout-content">
+        <!-- Order Summary -->
+        <div class="checkout-card">
+          <h3>Ringkasan Pesanan</h3>
+          <div id="checkout-items" class="checkout-items">
+            <!-- Items will be inserted here by JavaScript -->
+            <p class="empty-message">Tidak ada produk dalam keranjang</p>
+          </div>
+          <div class="checkout-total">
+            <h4>Total Pembayaran</h4>
+            <span id="checkout-total">0</span>
+          </div>
+        </div>
+        
+        <!-- Shipping Address -->
+        <div class="checkout-card">
+          <h3>Alamat Pengiriman</h3>
+          <div id="shipping-address-selector" class="shipping-address-selector">
+            <!-- Addresses will be inserted here by JavaScript -->
+            <p class="empty-message">Tidak ada alamat tersimpan</p>
+            <a href="profile.html" class="button">Tambah Alamat Baru</a>
+          </div>
+        </div>
+        
+        <!-- Payment Method -->
+        <div class="checkout-card">
+          <h3>Metode Pembayaran</h3>
+          <form id="payment-form" class="payment-form">
+            <div class="payment-options">
+              <div class="payment-option">
+                <input type="radio" id="bank-transfer" name="payment-method" value="bank-transfer" checked>
+                <label for="bank-transfer">
+                  <span class="payment-name">Transfer Bank</span>
+                  <span class="payment-desc">BCA, Mandiri, BNI, BRI</span>
+                </label>
+              </div>
+              <div class="payment-option">
+                <input type="radio" id="e-wallet" name="payment-method" value="e-wallet">
+                <label for="e-wallet">
+                  <span class="payment-name">E-Wallet</span>
+                  <span class="payment-desc">OVO, GoPay, DANA, LinkAja</span>
+                </label>
+              </div>
+              <div class="payment-option">
+                <input type="radio" id="cod" name="payment-method" value="cod">
+                <label for="cod">
+                  <span class="payment-name">Bayar di Tempat (COD)</span>
+                  <span class="payment-desc">Pembayaran tunai saat barang diterima</span>
+                </label>
+              </div>
+            </div>
+            
+            <button type="submit" id="place-order-btn" class="button btn-submit">Buat Pesanan</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- checkout section end -->
+  
+  <!-- footer start -->
+  <footer class="footer">
+    <div class="wrapper">
+      <a href="https://www.instagram.com/nrmfthazs.__/?__pwa=1" target="_blank"><i data-feather="instagram"></i></a>
+      <a href="https://www.facebook.com/miftaah.25" target="_blank"><i data-feather="facebook"></i></a>
+      <a href="https://x.com/itaa_toys250" target="_blank"><i data-feather="twitter"></i></a>
+    </div>
+    <div class="wrapper">
+      <a href="index.html">Home</a>
+      <a href="index.html#about">Tentang Kami</a>
+      <a href="index.html#product">Produk Kami</a>
+      <a href="index.html#contact">Kontak</a>
+    </div>
+    <span>created by Minira Group | © 2025</span>
+  </footer>
+  <!-- footer end -->
+
+  <!-- feather icon -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="js/icon.js"></script>
+  
+  <!-- sweetalert2 js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.2/sweetalert2.min.js"></script>
+  
+  <!-- my javascript -->
+  <script src="js/auth.js"></script>
+  <script src="js/checkout.js"></script>
+
+  <script>
+  document.getElementById("payment-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const method = document.querySelector('input[name="payment-method"]:checked').value;
+    const total = document.getElementById("checkout-total").innerText;
+
+    fetch("php/checkout.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `total=${total}&payment_method=${method}`
+    })
+    .then(res => res.text())
+    .then(data => {
+      if (data === "success") {
+        alert("Pesanan berhasil dibuat!");
+        window.location.href = "index.html";
+      } else {
+        alert("Gagal melakukan checkout");
+      }
+    });
+  });
+  </script>
+
+</body>
+</html>

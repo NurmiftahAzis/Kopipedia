@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+  <!-- fontawesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  
+  <!-- sweetalert2 css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.2/sweetalert2.min.css">
+  
+  <!-- my css -->
+  <link rel="stylesheet" href="css/style.css">
+  <title>Profil - KopiPedia</title>
+</head>
+<body>
+
+  <!-- navbar start -->
+  <nav class="navbar active">
+    <a href="index.html" class="navbar-logo">Kopi<span>Pedia</span></a>
+    <div class="navbar-list-group">
+      <a href="index.html" class="navbar-list">Home</a>
+      <a href="index.html#about" class="navbar-list">Tentang Kami</a>
+      <a href="index.html#product" class="navbar-list">Produk</a>
+      <a href="index.html#contact" class="navbar-list">Kontak</a>
+    </div>
+    <div class="navbar-icon" id="navbar-auth">
+      <!-- Auth buttons will be inserted here by JavaScript -->
+      <i data-feather="menu" class="icon" id="hamburger"></i>
+    </div>
+  </nav>
+  <!-- navbar end -->
+  
+  <!-- profile section start -->
+  <section class="profile-section" id="profile">
+    <div class="profile-container">
+      <div class="header">
+        <h2>Profil <span>Pengguna</span></h2>
+        <p>Kelola informasi akun dan alamat pengiriman Anda</p>
+      </div>
+      
+      <div class="profile-content">
+        <!-- Profile Info -->
+        <div class="profile-card">
+          <h3>Informasi Akun</h3>
+          <div class="profile-info">
+            <div class="info-group">
+              <label>Nama Lengkap</label>
+              <p id="profile-name">-</p>
+            </div>
+            <div class="info-group">
+              <label>Email</label>
+              <p id="profile-email">-</p>
+            </div>
+            <div class="info-group">
+              <label>Nomor Telepon</label>
+              <p id="profile-phone">-</p>
+            </div>
+            <div class="info-group">
+              <label>Tanggal Bergabung</label>
+              <p id="profile-date">-</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Address Management -->
+        <div class="profile-card">
+          <h3>Alamat Pengiriman</h3>
+          <div id="address-list" class="address-list">
+            <!-- Addresses will be inserted here by JavaScript -->
+            <p class="empty-message">Belum ada alamat tersimpan</p>
+          </div>
+          
+          <button id="add-address-btn" class="button">Tambah Alamat Baru</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- profile section end -->
+  
+  <!-- Address Form Modal -->
+  <div class="modal" data-id="addressModal">
+    <div class="modal-header">
+      <h3>Tambah Alamat Baru</h3>
+      <i data-feather="x-circle" class="btn-modal-close"></i>
+    </div>
+    <div class="modal-body">
+      <form id="address-form" class="form">
+        <div class="form-group">
+          <label for="address-label" class="label">Label Alamat</label>
+          <input type="text" id="address-label" class="input" placeholder="Rumah, Kantor, dll" required>
+        </div>
+        <div class="form-group">
+          <label for="recipient-name" class="label">Nama Penerima</label>
+          <input type="text" id="recipient-name" class="input" placeholder="Nama penerima" required>
+        </div>
+        <div class="form-group">
+          <label for="recipient-phone" class="label">Nomor Telepon Penerima</label>
+          <input type="tel" id="recipient-phone" class="input" placeholder="Nomor telepon penerima" required>
+        </div>
+        <div class="form-group">
+          <label for="address-detail" class="label">Alamat Lengkap</label>
+          <textarea id="address-detail" class="input" rows="3" placeholder="Alamat lengkap" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="postal-code" class="label">Kode Pos</label>
+          <input type="text" id="postal-code" class="input" placeholder="Kode pos" required>
+        </div>
+        <input type="hidden" id="address-id" value="">
+        <button type="submit" class="button btn-submit">Simpan Alamat</button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- footer start -->
+  <footer class="footer">
+    <div class="wrapper">
+      <a href="https://www.instagram.com/nrmfthazs.__/?__pwa=1" target="_blank"><i data-feather="instagram"></i></a>
+      <a href="https://www.facebook.com/miftaah.25" target="_blank"><i data-feather="facebook"></i></a>
+      <a href="https://x.com/itaa_toys250" target="_blank"><i data-feather="twitter"></i></a>
+    </div>
+    <div class="wrapper">
+      <a href="index.html">Home</a>
+      <a href="index.html#about">Tentang Kami</a>
+      <a href="index.html#product">Produk Kami</a>
+      <a href="index.html#contact">Kontak</a>
+    </div>
+    <span>created by Minira Group | © 2025</span>
+  </footer>
+  <!-- footer end -->
+
+  <!-- feather icon -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="js/icon.js"></script>
+  
+  <!-- sweetalert2 js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.2/sweetalert2.min.js"></script>
+  
+  <!-- my javascript -->
+  <script src="js/auth.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>
