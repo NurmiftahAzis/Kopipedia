@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Log logout activity (optional, but good for tracking)
 if (isset($_SESSION['user_id'])) {
     $conn = new mysqli("localhost", "root", "", "kopipedia_db");
     if ($conn->connect_error) {

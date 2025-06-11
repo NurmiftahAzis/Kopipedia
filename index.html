@@ -1,3 +1,7 @@
+<?php 
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,25 +21,32 @@
 </head>
 <body>
 
-  <!-- navbar start -->
-  <nav class="navbar">
-    <a href="#" class="navbar-logo">Kopi<span>Pedia</span></a>
-    <div class="navbar-list-group">
-      <a href="#home" class="navbar-list">Home</a>
-      <a href="#about" class="navbar-list">Tentang Kami</a>
-      <a href="#product" class="navbar-list">Produk</a>
-      <a href="#contact" class="navbar-list">Kontak</a>
-    </div>
-    <div class="navbar-icon" id="navbar-auth">
+<!-- navbar start -->
+<nav class="navbar">
+  <a href="#" class="navbar-logo">Kopi<span>Pedia</span></a>
+  <div class="navbar-list-group">
+    <a href="#home" class="navbar-list">Home</a>
+    <a href="#about" class="navbar-list">Tentang Kami</a>
+    <a href="#product" class="navbar-list">Produk</a>
+    <a href="#contact" class="navbar-list">Kontak</a>
+  </div>
+
+  <div class="navbar-icon">
+    <?php if (isset($_SESSION['login']) && $_SESSION['login'] === true): ?>
+
+      <a href="php/profile.php" class="button" style="margin-left: 1rem;"><?php echo $_SESSION['fullname']></a>
+      <a href="php/logout.php" class="button" style="margin-left: 1rem;">Keluar</a>
+    <?php else: ?>
       <a href="login.html" class="button" style="margin-right: 1rem;">Masuk</a>
       <a href="register.html" class="button" style="margin-right: 1rem;">Daftar</a>
-      <i data-feather="search" class="icon btn-modal" id="search" data-modal="searchModal"></i>
-      <i data-feather="shopping-cart" class="icon btn-modal" id="shopping-cart" data-modal="tableModal"></i>
-      <i data-feather="menu" class="icon" id="hamburger"></i>
-    </div>
-  </nav>
-  <!-- navbar end -->
-  
+    <?php endif; ?>
+    
+    <i data-feather="search" class="icon btn-modal" id="search" data-modal="searchModal"></i>
+    <i data-feather="shopping-cart" class="icon btn-modal" id="shopping-cart" data-modal="tableModal"></i>
+    <i data-feather="menu" class="icon" id="hamburger"></i>
+  </div>
+</nav>
+<!-- navbar end -->
   <!-- section hero start -->
   <section class="hero" id="home">
     <div class="content">
