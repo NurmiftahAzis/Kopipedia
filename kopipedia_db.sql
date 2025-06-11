@@ -339,6 +339,14 @@ ALTER TABLE `product_categories`
   ADD CONSTRAINT `product_categories_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
 COMMIT;
 
+-- Alter table `orders` to add `address_id`
+ALTER TABLE `orders`
+ADD COLUMN `address_id` INT(11) DEFAULT NULL;
+
+-- Add foreign key constraint (optional but recommended for data integrity)
+ALTER TABLE `orders`
+ADD CONSTRAINT `fk_orders_address` FOREIGN KEY (`address_id`) REFERENCES `addresses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
